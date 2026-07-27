@@ -1,5 +1,5 @@
 export default function Userpage() {
   return (
-    <div></div>
+    <div><h1>User Page</h1></div>
   );
 }

@@ -36,6 +36,16 @@ export type Organization = {
   created_at: string;
   updated_at: string;
 };
+export type Profile = {
+  id: string;
+  organization_id: string | null;
+  role: "admin" | "org_admin" | "user" | null;
+  credits: number | null;
+  is_active: boolean | null;
+  created_at: string;
+  updated_at: string;
+  name: string | null;
+};
 
 export type NewBeverage = Omit<Beverage, "id" | "created_at" | "updated_at">;
 export type UpdateBeverage = Partial<NewBeverage> & { id: string };

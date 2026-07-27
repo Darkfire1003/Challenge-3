@@ -21,7 +21,6 @@ export default function RegisterManager({
     isError,
     error,
   } = useGetOrganizations();
-
   const registerUser = useRegister();
 
   const [email, setEmail] = useState("");
@@ -37,10 +36,8 @@ export default function RegisterManager({
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!email.trim() || !password.trim() || !name.trim() || !organizationId) {
+    if (!email.trim() || !password.trim() || !name.trim() || !organizationId)
       return;
-    }
 
     registerUser.mutate({
       email,
@@ -52,7 +49,7 @@ export default function RegisterManager({
 
   if (isLoading) {
     return (
-      <div className="bg-bgCard rounded-md p-2 shadow w-43 flex items-center justify-center min-h-28">
+      <div className="bg-bgCard absolute lg:-left-21.5 lg:bottom-44 rounded-md p-2 shadow w-43 flex items-center justify-center min-h-28">
         <HamsterLoader />
       </div>
     );
@@ -60,40 +57,41 @@ export default function RegisterManager({
 
   if (isError) {
     return (
-      <p className="text-[8px] text-red-600 bg-bgCard rounded-md p-2 shadow w-43">
+      <p className="text-xs text-red-600 bg-bgCard rounded-md p-2 shadow w-43">
         Fehler: {error.message}
       </p>
     );
   }
 
-  if (registerUser.isError) {
-    const error = registerUser.error as AxiosError;
-    const status = error.response?.status;
-
-    return (
-      <p className="text-[8px] text-red-600 bg-bgCard rounded-md p-2 shadow w-43">
-        {status === 429
-          ? "Zu viele Anfragen. Bitte warte kurz und versuche es erneut."
-          : `Fehler: ${error.message}`}
-      </p>
-    );
-  }
+  const registerErrorMessage = (() => {
+    if (!registerUser.isError) return null;
+    const err = registerUser.error as AxiosError;
+    if (err.response?.status === 422)
+      return "Diese E-Mail ist bereits registriert oder das Passwort ist zu schwach.";
+    if (err.response?.status === 429)
+      return "Zu viele Anfragen. Bitte warte kurz und versuche es erneut.";
+    return `Fehler: ${err.message}`;
+  })();
 
   return (
     <section className="relative">
       <form
         onSubmit={handleRegister}
-        className="flex flex-col gap-1 bg-bgCard rounded-md p-2 shadow w-43"
+        className="absolute bottom-38 -left-18 lg:-left-21.5 lg:bottom-44 flex flex-col gap-1 bg-bgCard rounded-md p-2 shadow w-43"
       >
+        {registerErrorMessage && (
+          <p className="text-xs text-red-600">{registerErrorMessage}</p>
+        )}
+
         <label htmlFor="name" className="text-xs">
-          Name
+          Vollständiger Name
         </label>
         <input
           id="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Name"
-          className="text-[8px] leading-tight px-1 py-0.5 border border-gray-300 rounded outline-none"
+          className="text-xs leading-tight px-1 py-0.5 border border-gray-300 rounded outline-none"
         />
 
         <label htmlFor="email" className="text-xs">
@@ -105,7 +103,7 @@ export default function RegisterManager({
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="E-Mail"
-          className="text-[8px] leading-tight px-1 py-0.5 border border-gray-300 rounded outline-none"
+          className="text-xs leading-tight px-1 py-0.5 border border-gray-300 rounded outline-none"
         />
 
         <label htmlFor="password" className="text-xs">
@@ -117,7 +115,7 @@ export default function RegisterManager({
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Passwort"
-          className="text-[8px] leading-tight px-1 py-0.5 border border-gray-300 rounded outline-none"
+          className="text-xs leading-tight px-1 py-0.5 border border-gray-300 rounded outline-none"
         />
 
         <label htmlFor="organization" className="text-xs">
@@ -127,7 +125,7 @@ export default function RegisterManager({
           id="organization"
           value={organizationId}
           onChange={(e) => setOrganizationId(e.target.value)}
-          className="text-[8px] leading-tight px-1 py-0.5 border border-gray-300 rounded outline-none"
+          className="leading-tight text-xs px-1 py-0.5 border border-gray-300 rounded outline-none"
         >
           <option value="">Bitte wählen</option>
           {organizations?.map((org) => (
@@ -140,7 +138,7 @@ export default function RegisterManager({
         <button
           type="submit"
           disabled={registerUser.isPending}
-          className="text-[8px] bg-btn text-white rounded px-1 py-0.5 hover:bg-icon cursor-pointer disabled:opacity-50"
+          className="text-xs bg-btn text-white rounded px-1 py-0.5 hover:bg-icon cursor-pointer disabled:opacity-50"
         >
           Registrieren
         </button>
@@ -157,7 +155,7 @@ export default function RegisterManager({
       <button
         type="button"
         onClick={onBack}
-        className="absolute top-10 -right-30 px-3 py-1 rounded-full bg-btn hover:bg-icon"
+        className="absolute bottom-25 -right-12 lg:left-30 lg:bottom-50 px-3 py-1 w-fit rounded-full bg-btn hover:bg-icon"
       >
         Zurück
       </button>
