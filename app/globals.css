@@ -1,5 +1,33 @@
 @import "tailwindcss";
 
+@layer components {
+  .comic-look {
+    @apply rounded-[0.4em] border-[3px] border-black bg-[#fbca1f];
+    box-shadow: 0.1em 0.1em 0 #000;
+  }
+
+  .comic-look-soft {
+    @apply rounded-xl border-[3px] border-black bg-[#fbca1f];
+    box-shadow: 0.2em 0.2em 0 #000;
+  }
+  .comic-card {
+    @apply rounded-[0.4em] border-[3px] border-black p-4;
+    box-shadow: 0.1em 0.1em 0 #000;
+  }
+}
+
+@layer components {
+  .comic-text-outline {
+    color: white;
+    -webkit-text-stroke: 0.5px black;
+    text-shadow:
+      -1px -1px 0 #000,
+      1px -1px 0 #000,
+      -1px 1px 0 #000,
+      1px 1px 0 #000;
+  }
+}
+
 @theme {
   --color-prime: #6a95ae;
   --color-secon: #123250;
