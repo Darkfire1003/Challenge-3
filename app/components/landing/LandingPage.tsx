@@ -4,6 +4,8 @@ import { useState } from "react";
 import LoginManager from "../auth/LoginManager";
 import RegisterManager from "../auth/RegisterManager";
 import Image from "next/image";
+import { LightLines } from "../ui/light-lines";
+import { PopButton } from "../ui/buttons/pop-button";
 
 export default function LandingPage() {
   const [view, setView] = useState<"closed" | "login" | "register">("closed");
@@ -15,7 +17,17 @@ export default function LandingPage() {
   };
 
   return (
-    <main className="relative min-h-screen w-full overflow-x-hidden bg-prime flex flex-col items-center justify-center px-4">
+    <main className="relative min-h-screen w-full overflow-x-hidden  flex flex-col items-center justify-center px-4">
+      <LightLines
+        className="pointer-events-none"
+        linesOpacity={0.05}
+        lightsOpacity={0.8}
+        speedMultiplier={0.5}
+        gradientFrom="#6a95ae"
+        gradientTo="#1e3a8a"
+        lightColor="#ffffff"
+        lineColor="#ffffff"
+      />
       <div className="relative flex flex-col items-center lg:block">
         <div
           className={`text-center lg:absolute lg:right-full lg:top-20 lg:mr-10  flex flex-col items-center  transition-opacity duration-300 ${
@@ -29,8 +41,8 @@ export default function LandingPage() {
             width={450}
             className="w-24 h-auto lg:w-88"
           />
-          <p className="text-xs lg:text-lg text-center text-secon mt-2">
-            Hier Werden Getränkewünsche <strong>Wahr</strong>!!
+          <p className="text-xs lg:text-2xl font-bold drop-shadow-xs drop-shadow-secon text-center text-white mt-2">
+            Hier werden Getränkewünsche <strong className="drop-shadow-xs drop-shadow-prime">Wahr</strong>!!
           </p>
         </div>
 
@@ -73,12 +85,12 @@ export default function LandingPage() {
         </div>
 
         {view === "closed" && (
-          <button
+          <PopButton
             onClick={() => setView("login")}
-            className="lg:absolute lg:top-1/2 lg:left-full lg:ml-8 lg:-translate-y-1/2 px-6 py-2 rounded-full bg-white/80 hover:bg-white transition whitespace-nowrap"
+            className="lg:absolute lg:top-1/2 lg:left-full lg:ml-8  px-6 py-2 rounded-full transition whitespace-nowrap"
           >
             Hier einloggen
-          </button>
+          </PopButton>
         )}
       </div>
 

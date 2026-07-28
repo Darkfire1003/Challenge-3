@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { AxiosError } from "axios";
 import { useLogin } from "@/hooks/useLogin";
 import { useGetProfile } from "@/hooks/useGetProfile";
+import { useAuth } from "@/app/context/AuthContext";
 
 const roleRoutes: Record<string, string> = {
   admin: "/AdminPage",
@@ -25,6 +26,7 @@ export default function LoginManager({
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { login } = useAuth();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +40,8 @@ export default function LoginManager({
             { userId: authData.user.id, accessToken: authData.access_token },
             {
               onSuccess: (profile) => {
+                login(authData.access_token, authData.user.id);
+
                 const target = roleRoutes[profile.role ?? ""];
                 if (target) router.push(target);
               },
