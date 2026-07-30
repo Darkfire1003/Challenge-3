@@ -29,7 +29,7 @@ export default function BudgetManager() {
     return <p className="text-center text-red-600">Fehler: {error.message}</p>;
 
   return (
-    <section className="comic-card mx-auto max-w-xl h-1/3 bg-bgCard text-center place-content-center">
+    <section className="comic-card mx-auto max-w-xl h-1/3 bg-bgCard text-center place-content-center mt-20">
       <p className="text-secon text-3xl font-bold">Aktuelles Guthaben</p>
       <p className="text-2xl font-bold text-secon">
         {profile?.credits?.toFixed(2)} €
