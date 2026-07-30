@@ -26,43 +26,50 @@ export default function SuggestionManager() {
   };
 
   return (
-    <section className="max-w-sm mx-auto comic-card bg-bgCard shadow p-4">
-      <h2 className="text-center text-secon font-semibold mb-2">
-        Neues Getränk vorschlagen
+    <>
+      {" "}
+      <h2 className="comic-text-outline text-center text-4xl font-bold">
+        Neue Idee ? <br/>
+        Sag Sie uns !
       </h2>
+      <section className="max-w-lg h-fit place-content-center mx-auto comic-card bg-bgCard shadow p-5 mt-20">
+        <h2 className="text-center text-secon text-2xl font-semibold mb-4">
+          Neues Getränk vorschlagen
+        </h2>
 
-      {suggestBeverage.isSuccess && (
-        <p className="text-xs text-green-600 text-center mb-2">
-          Vorschlag wurde eingereicht!
-        </p>
-      )}
-      {suggestBeverage.isError && (
-        <p className="text-xs text-red-600 text-center mb-2">
-          Fehler: {suggestBeverage.error.message}
-        </p>
-      )}
+        {suggestBeverage.isSuccess && (
+          <p className="text-xl text-green-600 text-center mb-2">
+            Vorschlag wurde eingereicht!
+          </p>
+        )}
+        {suggestBeverage.isError && (
+          <p className="text-xs text-red-600 text-center mb-2">
+            Fehler: {suggestBeverage.error.message}
+          </p>
+        )}
 
-      <form onSubmit={handleSuggest} className="flex flex-col gap-2">
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Name des Getränks"
-          className="text-sm px-2 py-1  comic-card outline-none"
-        />
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Beschreibung"
-          className="text-sm px-2 py-1  comic-card  outline-none"
-        />
-        <ComicButton
-          type="submit"
-          disabled={suggestBeverage.isPending}
-          className="bg-btn comic-text-outline text-white text-xl rounded-full px-4 py-1.5 hover:bg-icon transition disabled:opacity-40"
-        >
-          Vorschlagen
-        </ComicButton>
-      </form>
-    </section>
+        <form onSubmit={handleSuggest} className="flex flex-col gap-2">
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Name des Getränks"
+            className="text-lg px-2 py-1  comic-card outline-none"
+          />
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Beschreibung"
+            className="text-lg px-2 py-1  comic-card  outline-none"
+          />
+          <ComicButton
+            type="submit"
+            disabled={suggestBeverage.isPending}
+            className="bg-btn comic-text-outline text-white text-xl rounded-full px-4 py-1.5 hover:bg-icon transition disabled:opacity-40"
+          >
+            Vorschlagen
+          </ComicButton>
+        </form>
+      </section>
+    </>
   );
 }

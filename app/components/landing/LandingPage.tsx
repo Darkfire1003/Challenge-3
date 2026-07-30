@@ -5,7 +5,7 @@ import LoginManager from "../auth/LoginManager";
 import RegisterManager from "../auth/RegisterManager";
 import Image from "next/image";
 import { LightLines } from "../ui/light-lines";
-import { PopButton } from "../ui/buttons/pop-button";
+import WaterButton from "../ui/buttons/WaterButton";
 
 export default function LandingPage() {
   const [view, setView] = useState<"closed" | "login" | "register">("closed");
@@ -42,7 +42,8 @@ export default function LandingPage() {
             className="w-24 h-auto lg:w-88"
           />
           <p className="text-xs lg:text-2xl font-bold drop-shadow-xs drop-shadow-secon text-center text-white mt-2">
-            Hier werden Getränkewünsche <strong className="drop-shadow-xs drop-shadow-prime">Wahr</strong>!!
+            Hier werden Getränkewünsche{" "}
+            <strong className="drop-shadow-xs drop-shadow-prime">Wahr</strong>!!
           </p>
         </div>
 
@@ -85,12 +86,30 @@ export default function LandingPage() {
         </div>
 
         {view === "closed" && (
-          <PopButton
+          <WaterButton
+            className="comic-text-outline text-2xl font-bold absolute bottom-100 left-130"
+            label="Hier Einloggen"
+            textColor="#ffffff"
+            waterColor="#22d3ee"
+            waterAmount={62}
+            rounded={999}
+            paddingX={52}
+            paddingY={28}
+            glass={{
+              blur: 24,
+              tint: "rgba(255,255,255,0.10)",
+              frost: 12,
+            }}
+            borderOptions={{
+              color: "rgba(255,255,255,0.35)",
+              stroke: 1,
+            }}
+            shadowOptions={{
+              color: "#000000",
+              intensity: 35,
+            }}
             onClick={() => setView("login")}
-            className="lg:absolute lg:top-1/2 lg:left-full lg:ml-8  px-6 py-2 rounded-full transition whitespace-nowrap"
-          >
-            Hier einloggen
-          </PopButton>
+          />
         )}
       </div>
 

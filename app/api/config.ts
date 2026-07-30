@@ -45,6 +45,7 @@ export type Profile = {
   created_at: string;
   updated_at: string;
   name: string | null;
+  avatar_path: string | null;
 };
 export type ProfileWithOrganization = Profile & {
   organizations: { name: string } | null;

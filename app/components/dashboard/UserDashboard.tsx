@@ -12,6 +12,8 @@ import HamsterLoader from "../ui/HamsterLoader";
 import { useProfile } from "../../../hooks/useProfile";
 import { PopButton } from "../ui/buttons/pop-button";
 import { ComicButton } from "../ui/buttons/ComicButton";
+import ProfileEditModal from "./ProfileEditModal";
+import WaterButton from "../ui/buttons/WaterButton";
 
 const views = {
   buy: "Kaufen",
@@ -27,6 +29,7 @@ export default function UserDashboard() {
   const [activeView, setActiveView] = useState<View>("buy");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { data: profile, isLoading, isError, error } = useProfile();
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -80,18 +83,33 @@ export default function UserDashboard() {
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex flex-col items-center gap- mb-6 mt-10 lg:mt-0">
+        <div className="flex flex-col items-center gap- mb-6  lg:mt-0">
           <Image
             src="/logo.png"
             alt="Stay Hydrated Firmen Logo"
             width={500}
             height={500}
-            className="w-42 h-auto"
+            className="w-24 lg:w-42 h-auto"
           />
-          
         </div>
         <div className="mb-3 text-center">
-          <p className="font-bold text-secon">{profile?.name}</p>
+          <button
+            onClick={() => setIsEditingProfile(true)}
+            className="mx-auto flex flex-col items-center gap-1"
+          >
+            {profile?.avatar_path && (
+              <Image
+                src={`/${profile.avatar_path}`}
+                alt="Avatar"
+                width={64}
+                height={64}
+                className="h-16 w-16 rounded-full"
+              />
+            )}
+            <span className="font-bold text-secon underline">
+              {profile?.name}
+            </span>
+          </button>
           <p className="text-xs text-secon/70">
             {profile?.organizations?.name}
           </p>
@@ -144,12 +162,30 @@ export default function UserDashboard() {
           </ComicButton>
         ))}
 
-        <PopButton
-          onClick={handleLogout}
-          className="text-left px-3 py-2 rounded-lg mt-auto mb-15  hover:bg-red-600 text-secon"
-        >
-          Abmelden
-        </PopButton>
+        <WaterButton
+          className="comic-text-outline text-2xl font-bold mt-3 lg:mt-35"
+          label="Ausloggen"
+          textColor="#ffffff"
+          waterColor="#FF0000"
+          waterAmount={62}
+          rounded={999}
+          paddingX={52}
+          paddingY={28}
+          glass={{
+            blur: 24,
+            tint: "rgba(255,255,255,0.10)",
+            frost: 12,
+          }}
+          borderOptions={{
+            color: "rgba(255,255,255,0.35)",
+            stroke: 1,
+          }}
+          shadowOptions={{
+            color: "#000000",
+            intensity: 35,
+          }}
+          onClick={() => handleLogout()}
+        />
       </aside>
 
       <section className="flex-1 px-4 py-8 pt-20 lg:pt-8">
@@ -157,6 +193,13 @@ export default function UserDashboard() {
         {activeView === "budget" && <BudgetManager />}
         {activeView === "suggest" && <SuggestionManager />}
       </section>
+      {isEditingProfile && (
+        <ProfileEditModal
+          currentName={profile?.name ?? ""}
+          currentAvatar={profile?.avatar_path ?? null}
+          onClose={() => setIsEditingProfile(false)}
+        />
+      )}
     </main>
   );
 }
