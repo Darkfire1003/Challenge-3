@@ -37,6 +37,7 @@ export default function OrganisationAdminManager() {
   const [newName, setNewName] = useState("");
   const [newPrice, setNewPrice] = useState("");
   const [newStock, setNewStock] = useState("");
+  const [newImageUrl, setNewImageUrl] = useState("");
 
   const lowStock = useMemo(
     () => beverages?.filter((b) => (b.stock ?? 0) < 5) || [],
@@ -54,13 +55,14 @@ export default function OrganisationAdminManager() {
         stock: parseInt(newStock) || 0,
         is_available: true,
         description: null,
-        image_path: null,
+        image_path: newImageUrl || null, // HIER IST DAS BILD
       } as any,
       {
         onSuccess: () => {
           setNewName("");
           setNewPrice("");
           setNewStock("");
+          setNewImageUrl("");
         },
       },
     );
@@ -90,47 +92,75 @@ export default function OrganisationAdminManager() {
         <h2 className="font-bold text-xl mb-3">
           Getränke verwalten (Org: {profile?.organizations?.name})
         </h2>
-        <form onSubmit={handleCreate} className="flex flex-wrap gap-2 mb-4">
+        <form onSubmit={handleCreate} className="flex flex-col gap-2 mb-4">
+          <div className="flex flex-wrap gap-2">
+            <input
+              className="border-2 border-black rounded p-2"
+              placeholder="Name"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+            />
+            <input
+              className="border-2 border-black rounded p-2 w-24"
+              placeholder="Preis"
+              type="number"
+              step="0.01"
+              value={newPrice}
+              onChange={(e) => setNewPrice(e.target.value)}
+            />
+            <input
+              className="border-2 border-black rounded p-2 w-24"
+              placeholder="Bestand"
+              type="number"
+              value={newStock}
+              onChange={(e) => setNewStock(e.target.value)}
+            />
+          </div>
           <input
             className="border-2 border-black rounded p-2"
-            placeholder="Name"
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
+            placeholder="Bild URL (optional) z.B. https://..."
+            value={newImageUrl}
+            onChange={(e) => setNewImageUrl(e.target.value)}
           />
-          <input
-            className="border-2 border-black rounded p-2 w-24"
-            placeholder="Preis"
-            type="number"
-            step="0.01"
-            value={newPrice}
-            onChange={(e) => setNewPrice(e.target.value)}
-          />
-          <input
-            className="border-2 border-black rounded p-2 w-24"
-            placeholder="Bestand"
-            type="number"
-            value={newStock}
-            onChange={(e) => setNewStock(e.target.value)}
-          />
+          {newImageUrl && (
+            <img
+              src={newImageUrl}
+              alt="Preview"
+              className="w-32 h-32 object-cover rounded border-2 border-black"
+            />
+          )}
           <button
             type="submit"
             disabled={createBeverage.isPending}
-            className="comic-look px-4 py-2"
+            className="comic-look px-4 py-2 w-fit"
           >
-            Anlegen
+            {createBeverage.isPending ? "Speichert..." : "Anlegen"}
           </button>
         </form>
         <ul className="grid md:grid-cols-2 gap-3">
           {beverages?.map((b) => (
             <li
               key={b.id}
-              className="border-2 border-black rounded p-2 flex justify-between"
+              className="border-2 border-black rounded p-2 flex justify-between items-center gap-2"
             >
-              <div>
-                <p className="font-bold">{b.name}</p>
-                <p className="text-xs">
-                  {b.price?.toFixed(2)} € – Stock: {b.stock}
-                </p>
+              <div className="flex gap-2 items-center">
+                {b.image_path ? (
+                  <img
+                    src={b.image_path}
+                    alt={b.name}
+                    className="w-12 h-12 object-cover rounded border"
+                  />
+                ) : (
+                  <div className="w-12 h-12 bg-gray-100 rounded border flex items-center justify-center text-">
+                    Kein Bild
+                  </div>
+                )}
+                <div>
+                  <p className="font-bold">{b.name}</p>
+                  <p className="text-xs">
+                    {b.price?.toFixed(2)} € – Stock: {b.stock}
+                  </p>
+                </div>
               </div>
               <div className="flex gap-1">
                 <button
