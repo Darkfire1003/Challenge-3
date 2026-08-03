@@ -1,3 +1,4 @@
+import OrganisationAdminManager from "@/app/components/orgAdmin/OrganisationAdminManager";
 export default function OrganisationAdminPage() {
-  return <div><h1>Organisations Admin</h1></div>;
+  return <OrganisationAdminManager />;
 }

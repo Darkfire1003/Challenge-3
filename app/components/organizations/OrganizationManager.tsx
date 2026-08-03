@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useGetOrganizations } from "@/hooks/useGetOrganizations";
 import { useCreateOrganization } from "@/hooks/useCreateOrganization";
 import { useUpdateOrganization } from "@/hooks/useUpdateOrganization";
@@ -15,28 +15,20 @@ export default function OrganizationManager() {
   const createItem = useCreateOrganization();
   const updateItem = useUpdateOrganization();
   const deleteItem = useDeleteOrganization();
-  const { data: allProfiles } = useGetAllProfiles();
+  const { data: allProfiles, isLoading: profilesLoading } = useGetAllProfiles();
 
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [selectedOrgId, setSelectedOrgId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
 
+  const [editId, setEditId] = useState<string | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editAddress, setEditAddress] = useState("");
+
   const { data: admins } = useGetOrganizationAdmins(selectedOrgId || "");
   const addAdmin = useAddOrganizationAdmin();
   const removeAdmin = useRemoveOrganizationAdmin();
-
-  const availableUsers = useMemo(() => {
-    if (!allProfiles) return [];
-    const adminIds = new Set(admins?.map((a) => a.id));
-    return allProfiles.filter(
-      (p) =>
-        !adminIds.has(p.id) &&
-        p.role !== "admin" &&
-        (p.name?.toLowerCase().includes(search.toLowerCase()) ||
-          p.id.toLowerCase().includes(search.toLowerCase())),
-    );
-  }, [allProfiles, admins, search]);
 
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,18 +44,39 @@ export default function OrganizationManager() {
     );
   };
 
+  const handleSaveEdit = (id: string) => {
+    if (!editName.trim()) return;
+    updateItem.mutate(
+      { id, name: editName, address: editAddress },
+      { onSuccess: () => setEditId(null) },
+    );
+  };
+
+  const getDisplayName = (user: any) => {
+    return (
+      user.name ||
+      user.raw_user_meta_data?.name ||
+      user.email?.split("@")[0] ||
+      user.id.slice(0, 8)
+    );
+  };
+
+  const getOrgName = (user: any) => {
+    return user.organizations?.name || user.organization_name || "keine Org";
+  };
+
   if (isLoading) return <p>Lädt…</p>;
   if (isError) return <p>Fehler: {error.message}</p>;
 
   return (
     <section className="max-w-4xl mx-auto p-4">
-      {isFetching && <p>Aktualisiere…</p>}
+      {isFetching && <p className="text-xs">Aktualisiere…</p>}
 
       <form
         onSubmit={handleCreate}
         className="comic-card bg-white mb-6 p-4 flex flex-col gap-2"
       >
-        <h2 className="font-bold text-secon">Neue Organisation anlegen</h2>
+        <h2 className="font-bold">Neue Organisation anlegen</h2>
         <input
           className="border-2 border-black rounded p-2"
           placeholder="Name"
@@ -88,95 +101,130 @@ export default function OrganizationManager() {
       <ul className="flex flex-col gap-4">
         {data?.map((item) => (
           <li key={item.id} className="comic-card bg-white p-4">
-            <h2 className="font-bold text-lg">{item.name}</h2>
-            <p className="text-sm opacity-70">{item.address}</p>
-
-            <div className="flex gap-2 mt-2 flex-wrap">
-              <button
-                className="comic-look px-3 py-1 text-sm"
-                onClick={() =>
-                  updateItem.mutate({
-                    id: item.id,
-                    name: `${item.name} (updated)`,
-                  })
-                }
-              >
-                Update
-              </button>
-              <button
-                className="comic-look bg-red-200 px-3 py-1 text-sm"
-                onClick={() => deleteItem.mutate(item.id)}
-              >
-                Löschen
-              </button>
-              <button
-                className="comic-look bg-bgCard px-3 py-1 text-sm"
-                onClick={() => {
-                  setSelectedOrgId(item.id);
-                  setSearch("");
-                }}
-              >
-                Admins verwalten
-              </button>
-            </div>
+            {editId === item.id ? (
+              <div className="flex flex-col gap-2">
+                <input
+                  className="border-2 border-black rounded p-2"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                />
+                <input
+                  className="border-2 border-black rounded p-2"
+                  value={editAddress}
+                  onChange={(e) => setEditAddress(e.target.value)}
+                />
+                <div className="flex gap-2">
+                  <button
+                    className="comic-look bg-green-200 px-3 py-1 text-sm"
+                    onClick={() => handleSaveEdit(item.id)}
+                  >
+                    Speichern
+                  </button>
+                  <button
+                    className="comic-look bg-gray-100 px-3 py-1 text-sm"
+                    onClick={() => setEditId(null)}
+                  >
+                    Abbrechen
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <h2 className="font-bold text-lg">{item.name}</h2>
+                <p className="text-sm opacity-70">{item.address}</p>
+                <div className="flex gap-2 mt-2 flex-wrap">
+                  <button
+                    className="comic-look px-3 py-1 text-sm"
+                    onClick={() => {
+                      setEditId(item.id);
+                      setEditName(item.name);
+                      setEditAddress(item.address || "");
+                    }}
+                  >
+                    Bearbeiten
+                  </button>
+                  <button
+                    className="comic-look bg-red-200 px-3 py-1 text-sm"
+                    onClick={() => deleteItem.mutate(item.id)}
+                  >
+                    Löschen
+                  </button>
+                  <button
+                    className="comic-look bg-bgCard px-3 py-1 text-sm"
+                    onClick={() => {
+                      setSelectedOrgId(item.id);
+                      setSearch("");
+                    }}
+                  >
+                    Admins verwalten
+                  </button>
+                </div>
+              </>
+            )}
 
             {selectedOrgId === item.id && (
               <div className="mt-4 border-t-2 border-black pt-3">
-                <h3 className="font-bold">Aktuelle Org-Admins</h3>
-                <ul className="mt-2">
-                  {admins?.length === 0 && (
-                    <li className="text-sm opacity-60">
-                      Noch keine Org-Admins
-                    </li>
-                  )}
-                  {admins?.map((admin) => (
+                <h3 className="font-bold text-sm">Aktuelle Org-Admins</h3>
+                <ul className="mt-2 mb-4">
+                  {admins?.map((a: any) => (
                     <li
-                      key={admin.id}
-                      className="flex justify-between items-center py-1"
+                      key={a.id}
+                      className="flex justify-between py-1 text-sm"
                     >
                       <span>
-                        {admin.name || admin.id}{" "}
-                        <span className="text-xs opacity-50">
-                          ({admin.id.slice(0, 8)}...)
-                        </span>
+                        {a.name ||
+                          a.raw_user_meta_data?.name ||
+                          a.id.slice(0, 8)}
                       </span>
                       <button
-                        className="text-xs comic-look px-2 py-1 bg-red-100"
-                        onClick={() =>
-                          removeAdmin.mutate({ profileId: admin.id })
-                        }
+                        className="comic-look bg-red-100 px-2 py-1 text-xs"
+                        onClick={() => removeAdmin.mutate({ profileId: a.id })}
                       >
                         Entfernen
                       </button>
                     </li>
                   ))}
+                  {admins?.length === 0 && (
+                    <li className="text-xs opacity-60">Noch keine</li>
+                  )}
                 </ul>
 
-                <div className="mt-4">
-                  <h4 className="font-bold text-sm">
-                    Neuen Org-Admin hinzufügen
-                  </h4>
-                  <input
-                    className="border-2 border-black rounded p-1 w-full mt-2"
-                    placeholder="Nach Name oder ID suchen..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                  />
-                  <div className="max-h-40 overflow-auto border border-black rounded mt-2">
-                    {availableUsers.map((user) => (
+                <input
+                  className="border-2 border-black rounded p-2 w-full text-sm"
+                  placeholder="Suche Name oder Email..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+
+                <div className="max-h-60 overflow-auto border-2 border-black rounded mt-2 bg-white">
+                  {profilesLoading && (
+                    <p className="p-2 text-xs">Lade {15} User...</p>
+                  )}
+                  {allProfiles
+                    ?.filter((p: any) => {
+                      const isAlreadyAdmin = admins?.some(
+                        (a: any) => a.id === p.id,
+                      );
+                      if (isAlreadyAdmin) return false;
+                      if (!search) return true;
+                      const hay =
+                        `${getDisplayName(p)} ${p.email || ""}`.toLowerCase();
+                      return hay.includes(search.toLowerCase());
+                    })
+                    .map((user: any) => (
                       <div
                         key={user.id}
-                        className="flex justify-between items-center p-2 hover:bg-gray-100 text-sm"
+                        className="flex justify-between items-center p-2 hover:bg-gray-100 text-sm border-b last:border-0"
                       >
                         <span>
-                          {user.name || "Ohne Name"}{" "}
-                          <span className="text-xs opacity-50">
-                            {user.role}
+                          <b>{getDisplayName(user)}</b>{" "}
+                          <span className="text- opacity-60">
+                            {user.email} - {getOrgName(user)}
                           </span>
                         </span>
                         <button
-                          className="comic-look px-2 py-1 text-xs"
-                          disabled={addAdmin.isPending}
+                          disabled={(admins?.length ?? 0) >= 1}
+                          className="comic-look px-2 py-1 text-xs disabled:opacity-30"
                           onClick={() =>
                             addAdmin.mutate({
                               profileId: user.id,
@@ -188,13 +236,11 @@ export default function OrganizationManager() {
                         </button>
                       </div>
                     ))}
-                    {availableUsers.length === 0 && (
-                      <p className="p-2 text-xs opacity-60">
-                        Keine passenden User gefunden
-                      </p>
-                    )}
-                  </div>
                 </div>
+                <p className="text- opacity-50 mt-1">
+                  {allProfiles?.length || 0} User via
+                  rpc/get_all_profiles_with_organization
+                </p>
               </div>
             )}
           </li>
