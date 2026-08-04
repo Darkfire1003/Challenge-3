@@ -11,6 +11,7 @@ import { useApproveBeverageSuggestion } from "@/hooks/useApproveBeverageSuggesti
 import { useRejectBeverageSuggestion } from "@/hooks/useRejectBeverageSuggestion";
 import { useGetOrganizationUsers } from "@/hooks/useGetOrganizationUsers";
 import { useActivateUser } from "@/hooks/useActivateUser";
+import { useDeleteUser } from "@/hooks/useDeleteUser";
 
 export default function OrganisationAdminManager() {
   const { data: profile, isLoading: profileLoading } = useProfile();
@@ -33,6 +34,7 @@ export default function OrganisationAdminManager() {
 
   const { data: orgUsers } = useGetOrganizationUsers(orgId);
   const activateUser = useActivateUser();
+  const deleteUser = useDeleteUser();
 
   const [newName, setNewName] = useState("");
   const [newPrice, setNewPrice] = useState("");
@@ -55,7 +57,7 @@ export default function OrganisationAdminManager() {
         stock: parseInt(newStock) || 0,
         is_available: true,
         description: null,
-        image_path: newImageUrl || null, // HIER IST DAS BILD
+        image_path: newImageUrl || null,
       } as any,
       {
         onSuccess: () => {
@@ -77,7 +79,7 @@ export default function OrganisationAdminManager() {
 
       {lowStock.length > 0 && (
         <div className="comic-card bg-yellow-100 border-2 border-black p-4">
-          <h2 className="font-bold">⚠️ Bestandswarnung: Unter 5 Einheiten</h2>
+          <h2 className="font-bold">Bestandswarnung: Unter 5 Einheiten</h2>
           <ul className="list-disc ml-5 mt-2">
             {lowStock.map((b) => (
               <li key={b.id}>
@@ -118,7 +120,7 @@ export default function OrganisationAdminManager() {
           </div>
           <input
             className="border-2 border-black rounded p-2"
-            placeholder="Bild URL (optional) z.B. https://..."
+            placeholder="Bild URL"
             value={newImageUrl}
             onChange={(e) => setNewImageUrl(e.target.value)}
           />
@@ -137,6 +139,7 @@ export default function OrganisationAdminManager() {
             {createBeverage.isPending ? "Speichert..." : "Anlegen"}
           </button>
         </form>
+
         <ul className="grid md:grid-cols-2 gap-3">
           {beverages?.map((b) => (
             <li
@@ -151,7 +154,7 @@ export default function OrganisationAdminManager() {
                     className="w-12 h-12 object-cover rounded border"
                   />
                 ) : (
-                  <div className="w-12 h-12 bg-gray-100 rounded border flex items-center justify-center text-">
+                  <div className="w-12 h-12 bg-gray-100 rounded border flex items-center justify-center text-xs">
                     Kein Bild
                   </div>
                 )}
@@ -163,6 +166,17 @@ export default function OrganisationAdminManager() {
                 </div>
               </div>
               <div className="flex gap-1">
+                <button
+                  className="comic-look text-xs px-2 py-1"
+                  onClick={() =>
+                    updateBeverage.mutate({
+                      id: b.id,
+                      stock: (b.stock ?? 0) + 5,
+                    } as any)
+                  }
+                >
+                  +5
+                </button>
                 <button
                   className="comic-look text-xs px-2 py-1"
                   onClick={() =>
@@ -198,9 +212,9 @@ export default function OrganisationAdminManager() {
             <div className="flex gap-2 mt-2">
               <button
                 className="comic-look bg-green-200 px-3 py-1 text-sm"
-                onClick={() => approveSuggestion.mutate(s.id)}
+                onClick={() => rejectSuggestion.mutate(s.id)}
               >
-                Genehmigen → Getränk
+                Erledigt
               </button>
               <button
                 className="comic-look bg-red-200 px-3 py-1 text-sm"
@@ -209,9 +223,9 @@ export default function OrganisationAdminManager() {
                 Ablehnen
               </button>
             </div>
-            <p className="text- opacity-60 mt-1">
-              Achtung: nach Freigabe müssen Bestand und Bild separat ergänzt
-              werden
+            <p className="text-xs opacity-60 mt-1 text-red-500">
+              Achtung: nach Erledigt müssen Bestand, Preis und Bild manuell
+              ergänzt werden!
             </p>
           </li>
         ))}
@@ -219,24 +233,45 @@ export default function OrganisationAdminManager() {
 
       <div className="comic-card bg-white p-4">
         <h2 className="font-bold text-xl mb-3">User innerhalb Organisation</h2>
-        {orgUsers?.map((u) => (
-          <li
-            key={u.id}
-            className="flex justify-between py-1 text-sm list-none border-b"
-          >
-            <span>
-              {u.name} – {u.role} {u.is_active ? "✅" : "⏳ wartet"}
-            </span>
-            {!u.is_active && (
-              <button
-                className="comic-look bg-green-100 px-2 py-1 text-xs"
-                onClick={() => activateUser.mutate(u.id)}
-              >
-                Freigeben
-              </button>
-            )}
-          </li>
-        ))}
+        <ul className="flex flex-col">
+          {orgUsers?.map((u) => (
+            <li
+              key={u.id}
+              className="flex justify-between items-center py-2 text-sm list-none border-b"
+            >
+              <span>
+                {u.name} – {u.role} {u.is_active ? "✅" : "⏳ wartet"}
+              </span>
+              <div className="flex gap-2">
+                {!u.is_active && (
+                  <button
+                    className="comic-look bg-green-100 px-2 py-1 text-xs"
+                    onClick={() => activateUser.mutate(u.id)}
+                  >
+                    Freigeben
+                  </button>
+                )}
+                <button
+                  className="comic-look bg-red-100 px-2 py-1 text-xs hover:bg-red-200"
+                  onClick={async () => {
+                    if (!confirm(`${u.name} wirklich löschen?`)) return;
+                    try {
+                      await deleteUser.mutateAsync(u.id);
+                      console.log("gelöscht:", u.id);
+                    } catch (e: any) {
+                      console.error("Delete Fehler:", e.response?.data);
+                      alert(
+                        "Löschen fehlgeschlagen: " + e.response?.data?.message,
+                      );
+                    }
+                  }}
+                >
+                  Löschen
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );

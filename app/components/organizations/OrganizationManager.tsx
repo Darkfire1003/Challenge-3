@@ -237,10 +237,6 @@ export default function OrganizationManager() {
                       </div>
                     ))}
                 </div>
-                <p className="text- opacity-50 mt-1">
-                  {allProfiles?.length || 0} User via
-                  rpc/get_all_profiles_with_organization
-                </p>
               </div>
             )}
           </li>
