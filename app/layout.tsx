@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Providers from "./providers";
+import Footer from "./components/Footer";
 
 export const metadata: Metadata = {
   title: "Stay Hydrated",
@@ -12,8 +13,11 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="de">
-      <body>
-        <Providers>{children}</Providers>
+      <body className="flex min-h-screen flex-col">
+        <Providers>
+          <div className="flex flex-1 h-full flex-col">{children}</div>
+          <Footer />
+        </Providers>
       </body>
     </html>
   );

@@ -90,9 +90,21 @@ export default function LoginManager({
 
   if (pendingApproval) {
     return (
-      <p className="text-[8px] bg-bgCard rounded-md p-2 shadow w-43 text-center">
-        Dein Konto wartet noch auf Freigabe durch einen Organisations-Admin.
-      </p>
+      <div className="absolute bottom-38 left-1/2 -translate-x-1/2 lg:bottom-44">
+        <div className="bg-bgCard rounded-md p-2 shadow w-43 text-center flex flex-col gap-2">
+          <p className="text-[8px]">
+            Dein Konto wartet noch auf Freigabe durch einen Organisations-Admin.
+          </p>
+
+          <button
+            type="button"
+            onClick={onBack}
+            className="text-[8px] bg-btn text-white rounded px-1 py-0.5 hover:bg-icon cursor-pointer"
+          >
+            Zurück zum Login
+          </button>
+        </div>
+      </div>
     );
   }
 

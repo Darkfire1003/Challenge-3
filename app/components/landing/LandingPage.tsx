@@ -17,7 +17,7 @@ export default function LandingPage() {
   };
 
   return (
-    <main className="relative min-h-screen w-full overflow-x-hidden  flex flex-col items-center justify-center px-4">
+    <main className="relative flex-1 w-full overflow-x-hidden flex flex-col items-center justify-center px-4">
       <LightLines
         className="pointer-events-none"
         linesOpacity={0.05}
@@ -86,33 +86,34 @@ export default function LandingPage() {
         </div>
 
         {view === "closed" && (
-          <WaterButton
-            className="comic-text-outline text-2xl font-bold absolute bottom-100 left-130"
-            label="Hier Einloggen"
-            textColor="#ffffff"
-            waterColor="#22d3ee"
-            waterAmount={62}
-            rounded={999}
-            paddingX={52}
-            paddingY={28}
-            glass={{
-              blur: 24,
-              tint: "rgba(255,255,255,0.10)",
-              frost: 12,
-            }}
-            borderOptions={{
-              color: "rgba(255,255,255,0.35)",
-              stroke: 1,
-            }}
-            shadowOptions={{
-              color: "#000000",
-              intensity: 35,
-            }}
-            onClick={() => setView("login")}
-          />
+          <div className="absolute top-1/2 left-full ml-8 -translate-y-1/2">
+            <WaterButton
+              className="comic-text-outline text-2xl font-bold"
+              label="Hier Einloggen"
+              textColor="#ffffff"
+              waterColor="#22d3ee"
+              waterAmount={62}
+              rounded={999}
+              paddingX={52}
+              paddingY={28}
+              glass={{
+                blur: 24,
+                tint: "rgba(255,255,255,0.10)",
+                frost: 12,
+              }}
+              borderOptions={{
+                color: "rgba(255,255,255,0.35)",
+                stroke: 1,
+              }}
+              shadowOptions={{
+                color: "#000000",
+                intensity: 35,
+              }}
+              onClick={() => setView("login")}
+            />
+          </div>
         )}
       </div>
-
       {showEmailModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
           <div className="w-full max-w-sm rounded-xl bg-white p-6 text-center shadow-lg">

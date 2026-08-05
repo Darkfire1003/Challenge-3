@@ -94,7 +94,7 @@ export default function UserDashboard() {
         <div className="mb-3 text-center">
           <button
             onClick={() => setIsEditingProfile(true)}
-            className="mx-auto flex flex-col items-center gap-1"
+            className="mx-auto flex flex-col items-center gap-1 cursor-pointer"
           >
             {profile?.avatar_path && (
               <Image
