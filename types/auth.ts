@@ -10,6 +10,10 @@ export type AuthResponse = {
   user: {
     id: string;
     email: string;
+    user_metadata?: {
+      name?: string;
+      organization_id?: string;
+    };
   };
 };
 

@@ -10,7 +10,6 @@ import BudgetManager from "../budget/BudgetManager";
 import SuggestionManager from "../suggestions/SuggestionManager";
 import HamsterLoader from "../ui/HamsterLoader";
 import { useProfile } from "../../../hooks/useProfile";
-import { PopButton } from "../ui/buttons/pop-button";
 import { ComicButton } from "../ui/buttons/ComicButton";
 import ProfileEditModal from "./ProfileEditModal";
 import WaterButton from "../ui/buttons/WaterButton";
