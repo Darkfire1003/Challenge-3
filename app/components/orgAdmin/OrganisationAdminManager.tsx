@@ -7,7 +7,7 @@ import { useCreateBeverage } from "@/hooks/useCreateBeverage";
 import { useUpdateBeverage } from "@/hooks/useUpdateBeverage";
 import { useDeleteBeverage } from "@/hooks/useDeleteBeverage";
 import { useGetBeverageSuggestions } from "@/hooks/useGetBeverageSuggestions";
-import { useApproveBeverageSuggestion } from "@/hooks/useApproveBeverageSuggestion";
+
 import { useRejectBeverageSuggestion } from "@/hooks/useRejectBeverageSuggestion";
 import { useGetOrganizationUsers } from "@/hooks/useGetOrganizationUsers";
 import { useActivateUser } from "@/hooks/useActivateUser";
@@ -29,7 +29,7 @@ export default function OrganisationAdminManager() {
   const deleteBeverage = useDeleteBeverage();
 
   const { data: suggestions } = useGetBeverageSuggestions(orgId);
-  const approveSuggestion = useApproveBeverageSuggestion();
+
   const rejectSuggestion = useRejectBeverageSuggestion();
 
   const { data: orgUsers } = useGetOrganizationUsers(orgId);
