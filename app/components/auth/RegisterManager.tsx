@@ -1,4 +1,20 @@
 "use client";
+// -- RegisterManager.tsx --
+// Registrierungskomponente für neue Nutzer.
+// Zweck:
+// - Stellt das Registrierungsformular bereit (Name, Email, Passwort, Organisation).
+// - Lädt verfügbare Organisationen via useGetOrganizations und sendet die Daten
+//   über useRegister an den Supabase /signup-Endpunkt.
+// Eingaben (Props): onBack, onSwitchToLogin, onRegisterSuccess (Callbacks)
+// Rückgabe: Form-Element (UI). Bei Erfolg wird onRegisterSuccess aufgerufen.
+// Laufzeit / Kontext:
+// - Clientseitig ("use client"); nutzt react-query-Hooks für Daten und Mutationen.
+// - Die Hook useRegister spricht das Supabase Auth-Endpunkt an; Fehler werden
+//   im UI angezeigt (z. B. 422 für bereits registrierte E-Mails).
+// Hinweise zur Sicherheit:
+// - Passwörter werden clientseitig an den Auth-Service gesendet; es ist sicherzustellen,
+//   dass die Verbindung HTTPS verwendet (Supabase Host). Es dürfen keine Service-Keys
+//   in den Client-Code gelangen.
 
 import { useEffect, useState } from "react";
 import { AxiosError } from "axios";

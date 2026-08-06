@@ -1,4 +1,14 @@
 "use client";
+// -- ProfileEditModal.tsx --
+// Modal zum Bearbeiten des Benutzerprofils (Name und Avatar).
+// Zweck:
+// - Zeigt ein Formular, mit dem Nutzer*innen ihren Anzeigenamen und Avatar wählen können.
+// - Verwendet useUpdateProfile, um die Änderungen in Supabase zu persistieren.
+// Eingaben (Props): currentName, currentAvatar, onClose
+// Rückgabe: Ein Modal-Dialog (React-Node). Bei erfolgreichem Speichern wird onClose aufgerufen.
+// Laufzeit/Kontext:
+// - Clientseitig (Interaktion, Bild-Auswahl), die Mutation verwendet die Hook useUpdateProfile
+//   welche einen Authorization-Header benötigt (Platzhalter im Hook-Code).
 
 import { useState } from "react";
 import Image from "next/image";

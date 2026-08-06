@@ -1,3 +1,22 @@
+// -- app/api/config.ts --
+// Axios-Clients und zentrale Typen für Supabase-Zugriffe.
+// Zweck:
+// - Stellt zwei vor-konfigurierte Axios-Clients bereit:
+//   1) `api` für REST-API-Aufrufe gegen die Supabase-REST-API (rest/v1)
+//   2) `authApi` für Auth-Operationen gegen den Supabase Auth-Endpunkt (auth/v1)
+// - Definiert außerdem TypeScript-Typen für Beverage, Organization, Profile, etc.,
+//   die von Hooks und Komponenten im Projekt verwendet werden.
+// Wichtige Hinweise zur Sicherheit und Laufzeit:
+// - Die hier gesetzten Header enthalten einen Platzhalter für den Authorization-Header
+//   (``Authorization: `******``). In der Laufzeit muss ein gültiges accessToken gesetzt
+//   werden. Möglichkeiten hierfür sind:
+//     • Hooks setzen den Header vor jedem Request (z. B. in useQuery/useMutation).
+//     • Ein Axios-Interceptor fügt den aktuellen Token automatisch hinzu.
+// - API-Keys werden aus der Umgebungsvariable NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY gelesen.
+//   Secrets (z. B. service_role keys) dürfen niemals in den Client-Code gelangen.
+// Regeln:
+// - Diese Datei wurde nur dokumentiert — es wurden keine Änderungen an der Logik vorgenommen.
+
 import axios from "axios";
 
 export const api = axios.create({

@@ -1,7 +1,19 @@
+// -- pop-button.tsx --
+// Stilistischer Pop-Button (wiederverwendete UI-Komponente).
+// Zweck:
+// - Bietet eine dekorative, wiederverwendbare Button-Variante mit Pop-/Shadow-Effekt.
+// - Vereinfacht konsistentes Styling für Hover-, Active- und Disabled-Zustände.
+// Eingaben:
+// - Übergibt alle üblichen Button-Attribute via React.ButtonHTMLAttributes.
+// Laufzeit:
+// - Rein clientseitig, rein visuelle Darstellung, keine Netzwerk- oder Auth-Logik.
+// Verwendung:
+// - Importieren und wie ein normaler <button> verwenden; className wird gemerged.
+
 import React from "react";
 import { cn } from "../../../lib/utils";
 
-export interface PopButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
+export type PopButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 export function PopButton({
   className,
