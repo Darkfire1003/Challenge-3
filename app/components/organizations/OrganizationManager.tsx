@@ -203,7 +203,7 @@ export default function OrganizationManager() {
 
                 <div className="max-h-60 overflow-auto border-2 border-black rounded mt-2 bg-white">
                   {profilesLoading && (
-                    <p className="p-2 text-xs">Lade {15} User...</p>
+                    <p className="p-2 text-xs">Lade User...</p>
                   )}
                   {allProfiles
                     ?.filter((p: any) => {
