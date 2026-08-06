@@ -1,68 +1,89 @@
-"use client";
+"use client"; // Wichtig für Next.js: Diese Datei läuft im Browser nichht auf dem Server
 
 import { useState, useMemo } from "react";
-import { useProfile } from "@/hooks/useProfile";
-import { useGetBeverages } from "@/hooks/useGetBeverages";
-import { useCreateBeverage } from "@/hooks/useCreateBeverage";
-import { useUpdateBeverage } from "@/hooks/useUpdateBeverage";
-import { useDeleteBeverage } from "@/hooks/useDeleteBeverage";
-import { useGetBeverageSuggestions } from "@/hooks/useGetBeverageSuggestions";
+import { useProfile } from "@/hooks/useProfile"; // Holt mein eigenes Profil (wer bin ich, welche Org?)
+import { useGetBeverages } from "@/hooks/useGetBeverages"; // Holt alle Getränke der Organisation
+import { useCreateBeverage } from "@/hooks/useCreateBeverage"; // Hook zum Erstellen von Getränken
+import { useUpdateBeverage } from "@/hooks/useUpdateBeverage"; // Hook zum Updaten von Getränken
+import { useDeleteBeverage } from "@/hooks/useDeleteBeverage"; // Hook zum Löschen
+
+import { useGetBeverageSuggestions } from "@/hooks/useGetBeverageSuggestions"; // Vorschläge von Usern
+import { useRejectBeverageSuggestion } from "@/hooks/useRejectBeverageSuggestion"; // Vorschlag ablehnen/erledigt
 
 import { LogoutButton } from "@/app/components/LogoutButton";
 
-import { useRejectBeverageSuggestion } from "@/hooks/useRejectBeverageSuggestion";
-import { useGetOrganizationUsers } from "@/hooks/useGetOrganizationUsers";
-import { useActivateUser } from "@/hooks/useActivateUser";
-import { useDeleteUser } from "@/hooks/useDeleteUser";
+import { useGetOrganizationUsers } from "@/hooks/useGetOrganizationUsers"; // Alle User der Organisation laden
+import { useActivateUser } from "@/hooks/useActivateUser"; // User freischalten
+import { useDeleteUser } from "@/hooks/useDeleteUser"; // User löschen
 
 export default function OrganisationAdminManager() {
+  //  Profi Laden
   const { data: profile, isLoading: profileLoading } = useProfile();
+  // profile = { id, organization_id, role,... } oder undefined wenn noch lädt
+  // profileLoading = true solange es lädt
+
+  //  orgId aus dem Profil. Wenn Profil noch nicht da orgId = null
+
   const orgId = profile?.organization_id || null;
 
+  //  Getränke laden
   const {
-    data: beverages,
-    isLoading,
-    isError,
-    error,
-    isFetching,
+    data: beverages, // Array aller Getränke
+    isLoading, // Lädt gerade zum ersten Mal?
+    isError, // Gab es einen Fehler?
+    error, // Die Fehlermeldung
+    isFetching, // Lädt gerade im Hintergrund neu?
   } = useGetBeverages();
+
+  // Mutations bzw Funktionen die etwas in der DB ändern
   const createBeverage = useCreateBeverage();
   const updateBeverage = useUpdateBeverage();
   const deleteBeverage = useDeleteBeverage();
 
+  // Vorschläge werden geladen - erst wenn orgId bekannt ist (wegen enabled im Hook)
   const { data: suggestions } = useGetBeverageSuggestions(orgId);
-
   const rejectSuggestion = useRejectBeverageSuggestion();
 
+  // die user der org laden
   const { data: orgUsers } = useGetOrganizationUsers(orgId);
   const activateUser = useActivateUser();
   const deleteUser = useDeleteUser();
 
-  const [newName, setNewName] = useState("");
-  const [newPrice, setNewPrice] = useState("");
-  const [newStock, setNewStock] = useState("");
-  const [newImageUrl, setNewImageUrl] = useState("");
+  // form states.für das "Neues Getränk anlegen" Formular
+  // Jedes Input Feld hat seinen eigenen State
+  const [newName, setNewName] = useState(""); // Name vom neuen Getränk
+  const [newPrice, setNewPrice] = useState(""); // Preis als String, weil Input immer String liefert
+  const [newStock, setNewStock] = useState(""); // Bestand als String
+  const [newImageUrl, setNewImageUrl] = useState(""); // Bild URL
 
+  // Warnliste für wenig Bestand
+  // useMemo = merkt sich das Ergebnis und rechnet nur neu wenn sich beverages ändert
+  // Filtert alle Getränke wo stock < 5 ist
   const lowStock = useMemo(
-    () => beverages?.filter((b) => (b.stock ?? 0) < 5) || [],
+    () => beverages?.filter((b) => (b.stock ?? 0) < 5) || [], //?? 0 heißt: wenn stock null ist, nimm 0
     [beverages],
   );
 
+  // wenn man auf Anlegen klickt:
   const handleCreate = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newName.trim() || !orgId) return;
+    e.preventDefault(); // Verhindert dass die Seite neu lädt (Standard bei Formularen)
+    if (!newName.trim() || !orgId) return; // Abbruch wenn kein Name oder keine Org
+
+    // Ruft die Mutation auf die in useCreateBeverage definiert ist
     createBeverage.mutate(
       {
-        organization_id: orgId,
+        organization_id: orgId, // Zu welcher Org gehört das Getränk
         name: newName,
-        price: parseFloat(newPrice) || 0,
-        stock: parseInt(newStock) || 0,
-        is_available: true,
+        price: parseFloat(newPrice) || 0, // String "1.50" -> Zahl 1.5
+        stock: parseInt(newStock) || 0, // String "10" -> Zahl 10
+        is_available: true, // Neues Getränk ist direkt verfügbar
         description: null,
-        image_path: newImageUrl || null,
+        image_path: newImageUrl || null, // Wenn leer, dann null in DB speichern
       } as any,
       {
+        // onSuccess wird ausgeführt NACHDEM Supabase erfolgreich gespeichert hat
         onSuccess: () => {
+          // Formular leeren
           setNewName("");
           setNewPrice("");
           setNewStock("");
@@ -72,17 +93,21 @@ export default function OrganisationAdminManager() {
     );
   };
 
-  if (profileLoading || isLoading) return <p>Lädt…</p>;
-  if (isError) return <p>Fehler: {error.message}</p>;
+  // Laden-Error anzeigen
+  if (profileLoading || isLoading) return <p>Lädt…</p>; // Solange Profil oder Getränke laden
+  if (isError) return <p>Fehler: {error.message}</p>; // Wenn Fehler beim Laden
 
+  // Ansicht UI
   return (
     <section className="max-w-5xl mx-auto p-4 flex flex-col gap-8">
+      {/* Header mit Logout */}
       <div className="flex justify-between items-center w-full border-2 border-black p-2 bg-white">
         <h1 className="font-bold">Admin</h1>
         <LogoutButton />
       </div>
-      {isFetching && <p>Aktualisiere…</p>}
-
+      {isFetching && <p>Aktualisiere…</p>}{" "}
+      {/* Zeigt an wenn im Hintergrund neu geladen wird */}
+      {/* WARNBOX WENN WENIG BESTAND */}
       {lowStock.length > 0 && (
         <div className="comic-card bg-yellow-100 border-2 border-black p-4">
           <h2 className="font-bold">Bestandswarnung: Unter 5 Einheiten</h2>
@@ -95,18 +120,19 @@ export default function OrganisationAdminManager() {
           </ul>
         </div>
       )}
-
+      {/* GETRÄNKE VERWALTEN BLOCK */}
       <div className="comic-card bg-white p-4">
         <h2 className="font-bold text-xl mb-3">
           Getränke verwalten (Org: {profile?.organizations?.name})
         </h2>
+        {/* Formular neues Getränk */}
         <form onSubmit={handleCreate} className="flex flex-col gap-2 mb-4">
           <div className="flex flex-wrap gap-2">
             <input
               className="border-2 border-black rounded p-2"
               placeholder="Name"
               value={newName}
-              onChange={(e) => setNewName(e.target.value)}
+              onChange={(e) => setNewName(e.target.value)} // Bei jedem Tippen State updaten
             />
             <input
               className="border-2 border-black rounded p-2 w-24"
@@ -130,6 +156,7 @@ export default function OrganisationAdminManager() {
             value={newImageUrl}
             onChange={(e) => setNewImageUrl(e.target.value)}
           />
+          {/* Live Vorschau wenn URL eingegeben wurde */}
           {newImageUrl && (
             <img
               src={newImageUrl}
@@ -139,17 +166,18 @@ export default function OrganisationAdminManager() {
           )}
           <button
             type="submit"
-            disabled={createBeverage.isPending}
+            disabled={createBeverage.isPending} // Button disabled solange Speichern läuft
             className="comic-look px-4 py-2 w-fit"
           >
             {createBeverage.isPending ? "Speichert..." : "Anlegen"}
           </button>
         </form>
 
+        {/* Liste aller Getränke */}
         <ul className="grid md:grid-cols-2 gap-3">
           {beverages?.map((b) => (
             <li
-              key={b.id}
+              key={b.id} // React braucht key bei.map
               className="border-2 border-black rounded p-2 flex justify-between items-center gap-2"
             >
               <div className="flex gap-2 items-center">
@@ -172,12 +200,13 @@ export default function OrganisationAdminManager() {
                 </div>
               </div>
               <div className="flex gap-1">
+                {/* Stock +5 Button - ruft updateBeverage Mutation auf */}
                 <button
                   className="comic-look text-xs px-2 py-1"
                   onClick={() =>
                     updateBeverage.mutate({
                       id: b.id,
-                      stock: (b.stock ?? 0) + 5,
+                      stock: (b.stock ?? 0) + 5, // alten Stock +5
                     } as any)
                   }
                 >
@@ -194,12 +223,13 @@ export default function OrganisationAdminManager() {
                 >
                   +10
                 </button>
+                {/* Verfügbar / Nicht verfügbar umschalten */}
                 <button
                   className={`comic-look text-xs px-2 py-1 ${!b.is_available ? "bg-yellow-200" : ""}`}
                   onClick={() =>
                     updateBeverage.mutate({
                       id: b.id,
-                      is_available: !b.is_available, // dreht true/false um
+                      is_available: !b.is_available, // true wird zu false, false zu true
                     } as any)
                   }
                 >
@@ -207,7 +237,7 @@ export default function OrganisationAdminManager() {
                 </button>
                 <button
                   className="comic-look bg-red-100 text-xs px-2 py-1"
-                  onClick={() => deleteBeverage.mutate(b.id)}
+                  onClick={() => deleteBeverage.mutate(b.id)} // Löschen nach ID
                 >
                   Löschen
                 </button>
@@ -216,7 +246,7 @@ export default function OrganisationAdminManager() {
           ))}
         </ul>
       </div>
-
+      {/* VORSCHLÄGE VON USERN */}
       <div className="comic-card bg-white p-4">
         <h2 className="font-bold text-xl mb-3">Nutzer-Vorschläge</h2>
         {suggestions?.map((s) => (
@@ -229,7 +259,7 @@ export default function OrganisationAdminManager() {
             <div className="flex gap-2 mt-2">
               <button
                 className="comic-look bg-green-200 px-3 py-1 text-sm"
-                onClick={() => rejectSuggestion.mutate(s.id)}
+                onClick={() => rejectSuggestion.mutate(s.id)} // Löscht den Vorschlag aus DB
               >
                 Erledigt
               </button>
@@ -247,7 +277,7 @@ export default function OrganisationAdminManager() {
           </li>
         ))}
       </div>
-
+      {/* USER LISTE */}
       <div className="comic-card bg-white p-4">
         <h2 className="font-bold text-xl mb-3">User innerhalb Organisation</h2>
         <ul className="flex flex-col">
@@ -260,10 +290,11 @@ export default function OrganisationAdminManager() {
                 {u.name} – {u.role} {u.is_active ? "✅" : "⏳ wartet"}
               </span>
               <div className="flex gap-2">
+                {/* Nur anzeigen wenn User noch nicht aktiv ist */}
                 {!u.is_active && (
                   <button
                     className="comic-look bg-green-100 px-2 py-1 text-xs"
-                    onClick={() => activateUser.mutate(u.id)}
+                    onClick={() => activateUser.mutate(u.id)} // Setzt is_active auf true
                   >
                     Freigeben
                   </button>
@@ -271,9 +302,9 @@ export default function OrganisationAdminManager() {
                 <button
                   className="comic-look bg-red-100 px-2 py-1 text-xs hover:bg-red-200"
                   onClick={async () => {
-                    if (!confirm(`${u.name} wirklich löschen?`)) return;
+                    if (!confirm(`${u.name} wirklich löschen?`)) return; // Sicherheitsabfrage
                     try {
-                      await deleteUser.mutateAsync(u.id);
+                      await deleteUser.mutateAsync(u.id); // Wartet bis wirklich gelöscht
                       console.log("gelöscht:", u.id);
                     } catch (e: any) {
                       console.error("Delete Fehler:", e.response?.data);
