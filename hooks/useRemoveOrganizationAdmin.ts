@@ -17,7 +17,7 @@ export function useRemoveOrganizationAdmin() {
       );
       return data;
     },
-    onSuccess: (_data, variables) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["organization-admins"] });
       queryClient.invalidateQueries({ queryKey: ["profiles"] });
     },

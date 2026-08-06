@@ -16,5 +16,17 @@ export function useDeleteOrganization() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["organizations"] });
     },
+    onError: (error: any) => {
+      const code = error.response?.data?.code;
+      const details = error.response?.data?.details;
+
+      if (code === "23503") {
+        alert(
+          "Organisation kann nicht gelöscht werden, da noch Daten mit ihr verknüpft sind, bitte an den DB-Admin wenden.",
+        );
+      } else {
+        alert("Löschen fehlgeschlagen: " + error.message);
+      }
+    },
   });
 }
