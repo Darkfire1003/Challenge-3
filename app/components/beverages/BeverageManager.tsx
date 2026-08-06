@@ -1,4 +1,7 @@
 "use client";
+// -- BeverageManager.tsx --
+// Zeigt die Getränkeliste aus Supabase an und ermöglicht den Kauf eines Getränks.
+// Die Komponente lädt Getränke über useGetBeverages und startet den Kauf über useBuyBeverage.
 
 import { useState } from "react";
 import Image from "next/image";
@@ -14,6 +17,8 @@ const SUPABASE_STORAGE_BASE_URL =
 const BEVERAGE_BUCKET = "beverages";
 
 function isValidImageUrl(url: string) {
+  // Prüft, ob eine Bild-URL als absolute oder relative URL behandelt werden kann.
+  // Unterstützt externe URLs und lokale Pfade.
   return (
     url.startsWith("http://") ||
     url.startsWith("https://") ||
@@ -55,6 +60,10 @@ export default function BeverageManager() {
     null,
   );
 
+  // Startet den Kaufvorgang für das aktuell ausgewählte Getränk.
+  // - Führt die Mutation useBuyBeverage.mutate aus.
+  // - Bei Erfolg wird die Auswahl geleert (setSelectedBeverage(null)),
+  //   so dass das Bestätigungsmodal geschlossen wird.
   const handleConfirmPurchase = () => {
     if (!selectedBeverage) return;
 
@@ -78,6 +87,9 @@ export default function BeverageManager() {
     );
   }
 
+  // Rendert die Getränkeliste. Für jedes Getränk werden Status (ausverkauft/geringer Lagerbestand),
+  // Bild-URL-Ermittlung und die Kauf-Schaltfläche ausgegeben. Beim Klick auf "Kaufen" wird
+  // selectedBeverage gesetzt, wodurch das Bestätigungsmodal erscheint.
   return (
     <>
       <h2 className="comic-text-outline text-center text-4xl font-bold">

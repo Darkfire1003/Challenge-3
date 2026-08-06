@@ -1,4 +1,15 @@
 "use client";
+// -- LandingPage.tsx --
+// Haupt-Landingpage der App. Steuert den Wechsel zwischen geschlossener Ansicht,
+// Login-Formular und Registrierungsformular. Diese Seite stellt den Einstieg in
+// den Auth-Flow dar und zeigt visuelle Elemente wie das Automatenbild.
+//
+// Zweck und Rolle:
+// - Dient als visuell ansprechender Einstiegspunkt für nicht-angemeldete Nutzer.
+// - Steuert lokale UI-Zustände (view: closed | login | register) und zeigt
+//   basierend darauf die entsprechenden Overlays (Login/Register) an.
+// - Verwendet visuelle Komponenten wie LightLines und WaterButton, die rein clientseitig laufen.
+
 
 import { useState } from "react";
 import LoginManager from "../auth/LoginManager";
@@ -12,6 +23,8 @@ export default function LandingPage() {
   const [showEmailModal, setShowEmailModal] = useState(false);
 
   const handleRegisterSuccess = () => {
+    // Nach erfolgreicher Registrierung wird das Anmelde-Overlay geschlossen
+    // und ein Hinweis angezeigt, dass die Bestätigung per E-Mail erfolgen muss.
     setView("closed");
     setShowEmailModal(true);
   };

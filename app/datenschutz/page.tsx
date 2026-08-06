@@ -1,3 +1,12 @@
+/* -- app/datenschutz/page.tsx --
+   Datenschutzseite (Privacy Notice) der Anwendung.
+   Zweck:
+   - Informiert Nutzer über die erhobenen Daten, deren Zweck und die Verantwortlichen.
+   - Statische Informationsseite, keine dynamischen API-Aufrufe.
+   Hinweise:
+   - Diese Seite läuft clientseitig ("use client") weil sie router.back() nutzt.
+   - Keine sensiblen Informationen oder Secrets in dieser Datei einfügen.
+*/
 "use client";
 
 import { useRouter } from "next/navigation";

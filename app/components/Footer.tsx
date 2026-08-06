@@ -1,3 +1,13 @@
+// -- app/components/Footer.tsx --
+// Globaler Footer der Anwendung: wird im Root-Layout eingebunden und auf allen Seiten angezeigt.
+// Zweck:
+// - Zeigt rechtliche Links (Impressum, Datenschutz) und ein kurzes Copyright-Statement.
+// - Rein präsentationsorientierte Komponente, keine API- oder Auth-Logik.
+// Laufzeit-Kontext:
+// - Kann serverseitig gerendert werden; next/link sorgt für clientseitige Navigation.
+// Hinweise:
+// - Änderungen an Texten (z. B. Copyright) sollten mit den Projektverantwortlichen abgestimmt werden.
+
 import Link from "next/link";
 
 export default function Footer() {

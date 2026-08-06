@@ -1,3 +1,18 @@
+// -- app/components/ui/buttons/ComicButton.tsx --
+// Wiederverwendete Button-Komponente im "Comic"-Design.
+// Zweck:
+// - Liefert eine konsistente Button-UI mit starken Konturen, Schatten und
+//   Hover-/Active-Effekten, die im gesamten Projekt wiederverwendet werden kann.
+// Props und Verhalten:
+// - Erweitert die nativen Button-Attribute (React.ButtonHTMLAttributes) und
+//   erlaubt sowohl "children" als auch ein einfaches "text"-Prop.
+// - Typische Props: onClick, disabled, type, className — alles wird direkt an das
+//   native <button> weitergereicht.
+// Laufzeit-Kontext:
+// - Pure UI-Komponente (clientseitig). Keine API- oder Auth-Logik hier.
+// - Styling erfolgt via Tailwind-Klassen; Änderung der visuellen Sprache sollte
+//   nur das CSS beeinflussen, nicht die Komponente selbst.
+
 import * as React from "react";
 import { cn } from "../../../lib/utils";
 

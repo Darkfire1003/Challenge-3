@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
 type AuthContextType = {
   accessToken: string | null;
@@ -13,17 +13,13 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [userId, setUserId] = useState<string | null>(null);
-  const [isInitialized, setIsInitialized] = useState(false);
-
-  useEffect(() => {
-    const storedToken = localStorage.getItem("access_token");
-    const storedUserId = localStorage.getItem("user_id");
-    if (storedToken) setAccessToken(storedToken);
-    if (storedUserId) setUserId(storedUserId);
-    setIsInitialized(true);
-  }, []);
+  const [accessToken, setAccessToken] = useState<string | null>(() =>
+    typeof window !== "undefined" ? localStorage.getItem("access_token") : null,
+  );
+  const [userId, setUserId] = useState<string | null>(() =>
+    typeof window !== "undefined" ? localStorage.getItem("user_id") : null,
+  );
+  const [isInitialized] = useState(true);
 
   const login = (token: string, id: string) => {
     localStorage.setItem("access_token", token);

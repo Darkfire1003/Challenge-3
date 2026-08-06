@@ -1,5 +1,17 @@
+// -- HamsterLoader.tsx --
+// Präsenzielle Lade-Komponente mit Hamster-Rad-Animation.
+// Zweck:
+// - Anzeige eines visuellen Lade-Indikators an Stellen, an denen Daten geladen werden.
+// - Rein presentational: keine API- oder Auth-Logik.
+// Accessibility:
+// - Das animierte Element hat role="img" und aria-label, sodass Screenreader informiert werden.
+// Props:
+// - text?: optionaler Beschreibungstext unter der Animation
+// - className?: zusätzliche CSS-Klassen zur Anpassung der Positionierung
 type HamsterLoaderProps = {
+  // Optionaler Text, der unter der Hamster-Animation angezeigt wird.
   text?: string;
+  // Zusätzliche CSS-Klassen für individuelle Positionierung oder Abstände.
   className?: string;
 };
 

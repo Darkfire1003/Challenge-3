@@ -1,3 +1,13 @@
+/* -- globals.css --
+   Globale Styles und Tailwind-Komponenten-Definitionen für die gesamte App.
+   Zweck:
+   - Enthält wiederverwendbare Component-Utilities (z.B. comic-look, comic-card)
+   - Definiert Theme-Variablen, Fonts und allgemeine Layout-Regeln
+   - Beinhaltet auch die Stildefinitionen für die visuelle Hamster-Ladeanimation
+   Hinweise:
+   - Diese Datei läuft global (clientseitig) und beeinflusst das gesamte Styling.
+   - Keine JS/TS-Logik hier, nur CSS/Tailwind-Definitions.
+*/
 @import "tailwindcss";
 
 @layer components {

@@ -1,8 +1,44 @@
+// -- WaterButton.tsx --
+// Interaktiver, canvas-basierter "Wasser-Button" mit integrierter Flüssigkeitssimulation.
+// Zweck:
+// - Stellt einen visuell auffälligen Button dar, dessen Oberfläche wie Wasser reagiert
+//   (Wellen, Tropfen, Spritzer) auf Pointer-Interaktionen.
+// - Dient rein der UI/UX; es werden keine Server- oder API-Aufrufe in dieser Komponente getätigt.
+// Eingaben (Props): Viele visuelle Parameter (Label, Farben, Padding, Rundung, Wasserfüllstand,
+//   Border- und Shadow-Optionen) sowie onClick-Handler für die Aktion.
+// Laufzeit / Kontext:
+// - Läuft ausschließlich im Browser ("use client").
+// - Nutzt Canvas 2D-API, devicePixelRatio-Anpassungen und ResizeObserver für korrekte Darstellung.
+// - Performance-relevante Implementierungsdetails: COLUMNS, SUBSTEPS, MAX_PIXELS usw. steuern
+//   die Genauigkeit vs. Performance der Simulation.
+// Rolle im Datenfluss:
+// - Visuelle Komponente: Wird als Button in Formularen und auf Landing-/Dashboard-Seiten genutzt.
+// - Eventuelle Aktionen (onClick) werden an übergeordnete Komponenten weitergereicht; die Simulation
+//   selbst ändert keine Applikationsdaten.
+// Hinweise zur Wartung:
+// - Änderungen an Default-Parametern sollten mit Blick auf Performance getestet werden.
+// - Bei mobilen Geräten ist darauf zu achten, dass devicePixelRatio und maximale Pixelzahl
+//   beschränkt bleiben, um Abstürze zu vermeiden.
+
 "use client";
 
 import { motion } from "framer-motion";
 import { useEffect, useRef, type CSSProperties } from "react";
 
+// -- DEFAULTS --
+// Sammlung von Default-Werten für die Komponente. Diese Defaults werden verwendet,
+// wenn der Aufrufer keine entsprechenden Props übergibt.
+// Erklärung der wichtigsten Felder:
+// - label: Beschriftungstext des Buttons
+// - textColor: Textfarbe
+// - paddingX / paddingY: Innenabstand in Pixeln (breiter Button je größer)
+// - rounded: Eckradius des sichtbaren Buttons
+// - glass: visuelle Glas-Effekte (tint, blur, frost) für das Overlay
+// - waterAmount: Füllgrad in Prozent (0..100) der simulierten Flüssigkeit
+// - waterColor: Basisfarbe der Flüssigkeit (wird für Gradienten / Glanz verwendet)
+// - border / borderOptions: Umschließende Linie und deren Styling
+// - shadow / shadowOptions: optischer Schatten der gesamten Komponente
+// - press: ob ein Tap/Press-Feedback (scale) aktiv sein soll
 const DEFAULTS = {
   label: "WATER BUTTON",
   textColor: "#000000",
@@ -175,6 +211,31 @@ function roundRectPath(
   ctx.closePath();
 }
 
+// -- WaterButton Komponente --
+// Zweck:
+// - Rendert einen interaktiven Button mit realistischer Wasseroberflächen-Simulation
+// - Reagiert auf Pointer-Ereignisse: hover, move, down → erzeugt Wellen und Tropfen
+//
+// Eingaben (Props):
+// - label: Text, der im Button angezeigt wird
+// - font: optionale CSSProperties für die Schrift
+// - textColor, paddingX/Y, rounded: visuelle Parameter
+// - glass, waterAmount, waterColor: steuern die Simulation / das Erscheinungsbild
+// - border, borderOptions, shadow, shadowOptions: visueller Rahmen und Schatten
+// - press: ob whileTap Animationen angewendet werden
+//
+// Rückgabewert:
+// - Ein React-Node (motion.button) mit internem <canvas> zur Darstellung
+//
+// Wichtige intern verwendete Funktionen/Blöcke (Kurzüberblick):
+// - parseColor: Parst hex / rgba Strings in RGBA-Floats
+// - roundRectPath: Hilfsfunktion zum Zeichnen abgerundeter Pfade auf 2D-Canvas
+// - useEffect: initialisiert die Canvas-Simulation, Pointer-Event-Handler,
+//   ResizeObserver und die Animations-Loop (requestAnimationFrame)
+//
+// Laufzeit-Kontext:
+// - Komponente läuft ausschließlich im Browser (client-side). Sie kommuniziert
+//   nicht mit Next.js Server Actions oder Supabase; sie beeinflusst lediglich UI/UX.
 export default function WaterButton(props: WaterButtonProps) {
   const {
     label = DEFAULTS.label,

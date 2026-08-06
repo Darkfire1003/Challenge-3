@@ -1,4 +1,9 @@
 "use client";
+// -- LoginManager.tsx --
+// Diese Komponente zeigt das Login-Formular für bestehende Nutzer.
+// Sie nutzt den Supabase Auth-Flow über useLogin, liest das Profil mit useGetProfile
+// und legt bei Bedarf ein neues Profil mit useCreateProfile an.
+// Nach erfolgreichem Login speichert sie das Token in AuthContext und leitet weiter.
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -31,6 +36,17 @@ export default function LoginManager({
   const [password, setPassword] = useState("");
   const [pendingApproval, setPendingApproval] = useState(false);
 
+  // Verarbeitet das Login-Formular:
+  // Ablauf:
+  // 1) Validierung der Eingaben (E-Mail und Passwort müssen gesetzt sein)
+  // 2) Aufruf von useLogin.mutate um das Auth-Objekt (access_token u.a.) zu erhalten
+  // 3) Mit dem erhaltenen access_token wird versucht, das zugehörige Profil zu laden (useGetProfile)
+  // 4) Falls kein Profil existiert: createProfile aufrufen und auf Freigabe warten
+  // 5) Falls Profil existiert und aktiv ist: Token in AuthContext speichern (login) und Weiterleitung
+  // Hinweise:
+  // - access_token wird temporär an getProfile/createProfile übergeben, damit die REST-API
+  //   den Authorization-Header nutzen kann (im Code als Platzhalter dargestellt).
+  // - Fehler-Handling wird über react-query-Statusfelder (isError, error) gesteuert.
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || !password.trim()) return;
@@ -72,6 +88,9 @@ export default function LoginManager({
     );
   };
 
+  // Hilfsfunktion zur Erzeugung einer benutzerfreundlichen Fehlermeldung
+  // basierend auf dem Status der useLogin-Mutation. Unterscheidet spezifisch
+  // einen 400-Status (falsche Zugangsdaten) von anderen Fehlern.
   const loginErrorMessage = (() => {
     if (!loginUser.isError) return null;
     const err = loginUser.error as AxiosError;

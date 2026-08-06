@@ -1,4 +1,12 @@
 "use client";
+// -- SuggestionManager.tsx --
+// UI-Komponente, die es Nutzer*innen erlaubt, neue Getränkevorschläge einzureichen.
+// Zweck:
+// - Erfasst Name und Beschreibung eines vorgeschlagenen Getränks und sendet die
+//   Daten an die persistente Schicht über useSuggestBeverage.
+// - Zeigt Erfolg-/Fehlermeldungen basierend auf dem Hook-Status an.
+// Hinweis: Die Hook useSuggestBeverage führt eine Mutation gegen die Supabase-API aus
+// und läuft clientseitig (Benutzerinteraktion).
 
 import { useState } from "react";
 import { useSuggestBeverage } from "@/hooks/useSuggestBeverage";
@@ -11,6 +19,10 @@ export default function SuggestionManager() {
   const [description, setDescription] = useState("");
 
   const handleSuggest = (e: React.FormEvent) => {
+    // Verarbeitet das Formular zum Einreichen eines Getränkevorschlags.
+    // - Validiert die Eingabe (mindestens ein Name erforderlich).
+    // - Ruft die Mutation useSuggestBeverage.mutate auf, die die Daten an Supabase sendet.
+    // - Bei Erfolg werden die Eingabefelder geleert.
     e.preventDefault();
     if (!name.trim()) return;
 
