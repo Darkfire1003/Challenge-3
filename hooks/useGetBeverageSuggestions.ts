@@ -17,6 +17,6 @@ export function useGetBeverageSuggestions(organizationId: string | null) {
       );
       return data;
     },
-    enabled: !!accessToken,
+    enabled: Boolean(accessToken),
   });
 }

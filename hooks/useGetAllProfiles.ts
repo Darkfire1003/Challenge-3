@@ -24,6 +24,6 @@ export function useGetAllProfiles() {
       );
       return data;
     },
-    enabled: !!accessToken,
+    enabled: Boolean(accessToken),
   });
 }

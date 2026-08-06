@@ -14,6 +14,6 @@ export function useProfile() {
       );
       return data[0];
     },
-    enabled: !!accessToken && !!userId,
+    enabled: Boolean(accessToken) && Boolean(userId),
   });
 }

@@ -13,6 +13,6 @@ export function useGetBeverages() {
       });
       return data;
     },
-    enabled: !!accessToken,
+    enabled: Boolean(accessToken),
   });
 }

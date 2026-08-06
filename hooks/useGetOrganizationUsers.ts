@@ -13,6 +13,6 @@ export function useGetOrganizationUsers(organizationId: string | null) {
       );
       return data;
     },
-    enabled: !!accessToken && !!organizationId,
+    enabled: Boolean(accessToken) && Boolean(organizationId),
   });
 }

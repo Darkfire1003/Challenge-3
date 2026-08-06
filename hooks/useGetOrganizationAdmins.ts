@@ -16,6 +16,6 @@ export function useGetOrganizationAdmins(organizationId: string) {
       );
       return data;
     },
-    enabled: !!accessToken && !!organizationId,
+    enabled: Boolean(accessToken) && Boolean(organizationId),
   });
 }
