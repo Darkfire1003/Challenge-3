@@ -235,8 +235,8 @@ export default function OrganisationAdminManager() {
               </button>
             </div>
             <p className="text-xs opacity-60 mt-1 text-red-500">
-              Achtung: nach Erledigt müssen Bestand, Preis und Bild manuell
-              ergänzt werden!
+              Achtung: nach Erledigt muss das Getränk und Getränke verwalten
+              manuell angelegt werden.
             </p>
           </li>
         ))}
