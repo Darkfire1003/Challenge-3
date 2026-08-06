@@ -18,7 +18,6 @@ export function useDeleteOrganization() {
     },
     onError: (error: any) => {
       const code = error.response?.data?.code;
-      const details = error.response?.data?.details;
 
       if (code === "23503") {
         alert(
