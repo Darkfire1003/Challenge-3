@@ -8,6 +8,8 @@ import { useUpdateBeverage } from "@/hooks/useUpdateBeverage";
 import { useDeleteBeverage } from "@/hooks/useDeleteBeverage";
 import { useGetBeverageSuggestions } from "@/hooks/useGetBeverageSuggestions";
 
+import { LogoutButton } from "@/app/components/LogoutButton";
+
 import { useRejectBeverageSuggestion } from "@/hooks/useRejectBeverageSuggestion";
 import { useGetOrganizationUsers } from "@/hooks/useGetOrganizationUsers";
 import { useActivateUser } from "@/hooks/useActivateUser";
@@ -75,6 +77,10 @@ export default function OrganisationAdminManager() {
 
   return (
     <section className="max-w-5xl mx-auto p-4 flex flex-col gap-8">
+      <div className="flex justify-between items-center w-full border-2 border-black p-2 bg-white">
+        <h1 className="font-bold">Admin</h1>
+        <LogoutButton />
+      </div>
       {isFetching && <p>Aktualisiere…</p>}
 
       {lowStock.length > 0 && (

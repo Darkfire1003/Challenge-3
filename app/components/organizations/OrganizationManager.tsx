@@ -9,6 +9,7 @@ import { useGetOrganizationAdmins } from "@/hooks/useGetOrganizationAdmins";
 import { useAddOrganizationAdmin } from "@/hooks/useAddOrganizationAdmin";
 import { useRemoveOrganizationAdmin } from "@/hooks/useRemoveOrganizationAdmin";
 import { useGetAllProfiles } from "@/hooks/useGetAllProfiles";
+import { LogoutButton } from "@/app/components/LogoutButton";
 
 export default function OrganizationManager() {
   const { data, isLoading, isError, error, isFetching } = useGetOrganizations();
@@ -70,6 +71,10 @@ export default function OrganizationManager() {
 
   return (
     <section className="max-w-4xl mx-auto p-4">
+      <div className="flex justify-between items-center w-full border-2 border-black p-2 bg-white mb-5">
+        <h1 className="font-bold">Admin</h1>
+        <LogoutButton />
+      </div>
       {isFetching && <p className="text-xs">Aktualisiere…</p>}
 
       <form
