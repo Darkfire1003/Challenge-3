@@ -189,6 +189,17 @@ export default function OrganisationAdminManager() {
                   +10
                 </button>
                 <button
+                  className={`comic-look text-xs px-2 py-1 ${!b.is_available ? "bg-yellow-200" : ""}`}
+                  onClick={() =>
+                    updateBeverage.mutate({
+                      id: b.id,
+                      is_available: !b.is_available, // dreht true/false um
+                    } as any)
+                  }
+                >
+                  {b.is_available ? "Deaktivieren" : "Aktivieren"}
+                </button>
+                <button
                   className="comic-look bg-red-100 text-xs px-2 py-1"
                   onClick={() => deleteBeverage.mutate(b.id)}
                 >
