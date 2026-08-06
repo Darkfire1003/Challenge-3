@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/context/AuthContext";
+
 import { cn } from "./../../lib/utils";
 import Image from "next/image";
 import BeverageManager from "../beverages/BeverageManager";
@@ -24,11 +25,21 @@ type View = keyof typeof views;
 
 export default function UserDashboard() {
   const router = useRouter();
-  const { logout } = useAuth();
+  const { logout, accessToken, isInitialized } = useAuth();
   const [activeView, setActiveView] = useState<View>("buy");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { data: profile, isLoading, isError, error } = useProfile();
   const [isEditingProfile, setIsEditingProfile] = useState(false);
+
+  useEffect(() => {
+    if (isInitialized && !accessToken) {
+      router.push("/");
+    }
+  }, [isInitialized, accessToken, router]);
+
+  if (!isInitialized || !accessToken) {
+    return <HamsterLoader />;
+  }
 
   const handleLogout = () => {
     logout();
