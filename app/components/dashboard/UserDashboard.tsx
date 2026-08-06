@@ -94,7 +94,8 @@ export default function UserDashboard() {
         <div className="mb-3 text-center">
           <button
             onClick={() => setIsEditingProfile(true)}
-            className="mx-auto flex flex-col items-center gap-1 cursor-pointer"
+            className="mx-auto flex flex-col items-center gap-1 group cursor-pointer relative"
+            title="Profil bearbeiten"
           >
             {profile?.avatar_path && (
               <Image
@@ -102,11 +103,15 @@ export default function UserDashboard() {
                 alt="Avatar"
                 width={64}
                 height={64}
-                className="h-16 w-16 rounded-full"
+                className="h-16 w-16 rounded-full group-hover:ring-2 ring-secon transition-all"
               />
             )}
             <span className="font-bold text-secon underline">
               {profile?.name}
+            </span>
+            {/* Tooltip */}
+            <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              Profil bearbeiten
             </span>
           </button>
           <p className="text-xs text-secon/70">
