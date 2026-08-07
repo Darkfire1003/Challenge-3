@@ -1,3 +1,15 @@
+// -- GoldenButton.tsx --
+// Wiederverwendete Button-Komponente mit goldigem, stilisiertem Look.
+// Zweck:
+// - Bietet eine wiederverwendbare Schaltfläche mit goldener Oberfläche und unterschiedlichen Größen.
+// - Wird in Formularen und an hervorgehobenen Stellen der UI eingesetzt.
+// Eingaben (Props):
+// - text: Anzeigentext
+// - size: 'sm' | 'md' | 'lg' (wählt gewünschte Style-Set)
+// - className: zusätzliche CSS-Klassen
+// Laufzeit/Kontext:
+// - Rein visuelle Komponente, kein Netzwerkzugriff oder Auth-Logik.
+// - Nutzt cn (tailwind-merge + clsx) um className-Kombinationen sicher zu verbinden.
 import * as React from "react";
 import { cn } from "../../../lib/utils";
 
@@ -12,6 +24,10 @@ const sizeStyles = {
   md: "h-11 px-4 text-base rounded-md",
   lg: "h-12 px-6 text-base rounded-lg",
 };
+
+// -- GoldenButton --
+// Diese Hilfstabelle definiert die Standardgrößen der Button-Komponente.
+// Sie wird für das responsive Styling in der Darstellung verwendet.
 
 export function GoldenButton({
   text = "Golden Button",

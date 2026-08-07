@@ -1,4 +1,8 @@
 "use client";
+// -- BudgetManager.tsx --
+// Komponente zum Anzeigen und Aufladen des Nutzer-Guthabens.
+// Sie nutzt useProfile zur Anzeige des aktuellen Guthabens und useUpdateCredits
+// zum Absenden von Guthaben-Aktualisierungen an Supabase.
 
 import { useState } from "react";
 import { useProfile } from "@/hooks/useProfile";
@@ -13,6 +17,9 @@ export default function BudgetManager() {
   const [amount, setAmount] = useState("");
 
   const handleTopUp = (e: React.FormEvent) => {
+    // Verarbeitet das Aufladen des Guthabens.
+    // Konvertiert den Eingabewert in eine Zahl, prüft die Eingabe und sendet
+    // dann die neue Gutschrift an Supabase über den useUpdateCredits-Hook.
     e.preventDefault();
     const value = Number(amount);
     if (!value || value <= 0 || !profile) return;

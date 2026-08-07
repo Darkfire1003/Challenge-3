@@ -1,3 +1,22 @@
+// -- LightLines.tsx --
+// Animierter SVG-Hintergrund mit fallenden Licht-Tropfen (Visual-Component).
+// Zweck:
+// - Stellt eine rein visuelle, animierte Hintergrundebene mit Linien und Tropfen dar.
+// - Eignet sich als dekoratives Overlay auf Landing- oder Content-Seiten.
+// Eingaben (Props): Steuerbare Parameter wie Farben, Opazitäten, Animationsgeschwindigkeit
+//   und optionale children für ein Content-Overlay.
+// Laufzeit / Kontext:
+// - Läuft ausschließlich im Browser ("use client").
+// - Verwendet useEffect, requestAnimationFrame und IntersectionObserver für performante Animationen.
+// - Keine Datenbank- oder Netzwerkzugriffe, rein UI/Rendering-Logik.
+// Rolle im Datenfluss:
+// - Visuelle Präsentationskomponente; beeinflusst keine Applikationsdaten.
+// Hinweise zur Implementierung:
+// - Nutzt lokale Refs und DOM-Manipulation (SVG transform attributes) für flüssige Animation.
+// - Bei Performance-Problemen sind Anpassungen am speedMultiplier, Anzahl der Tropfen oder an
+//   der devicePixelRatio-Behandlung sinnvoll.
+// Wichtige Sicherheitshinweise: Keine sensiblen Daten oder Tokens in dieser Datei.
+
 "use client";
 
 import { useEffect, useRef } from "react";
@@ -57,6 +76,10 @@ const dropLights: { id: string; cx: number; tops: number[] }[] = [
 
 const DROP_SIZE = 14;
 
+// Hauptkomponente:
+// - Rendert den animierten Hintergrund mit Linien und Tropfen.
+// - Prop-Defaults steuern Farben, Opazitäten und Animationsgeschwindigkeit.
+// - children erlaubt eine Overlay-Ebene über der Animation.
 export function LightLines({
   className,
   linesOpacity = 0.05,
@@ -74,7 +97,9 @@ export function LightLines({
   const frameRef = useRef<number | null>(null);
 
   useEffect(() => {
-    // Light elements configuration
+    // useEffect initialisiert die Animation im DOM.
+    // - Es werden SVG-Gruppen ausgewählt und Bewegungsrichtungen zugewiesen.
+    // - Eine requestAnimationFrame-Schleife animiert die Tropfen kontinuierlich.
     const lightsDown = [
       { selector: ".light4", from: -1080, to: 1080 },
       { selector: ".light5", from: -1080, to: 1080 },
