@@ -1,16 +1,26 @@
 // -- next.config.ts --
-// Next.js Konfigurationsdatei (nur konfigurativer Inhalt).
-// Zweck:
-// - Definiert hier erlaubte Remote-Image-Quellen (remotePatterns) für next/image,
-//   damit Bilder von Supabase Storage und Unsplash sicher geladen werden können.
-// Hinweise zur Sicherheit:
-// - Erlaubte Hostnamen begrenzen, von welchen Domains Bilder geladen werden dürfen.
-// - Diese Datei ist Konfiguration und enthält keine Applikations-Logik.
+// Next.js-Konfigurationsdatei für lokale Entwicklung
+// und Deployment auf GitHub Pages.
 
 import type { NextConfig } from "next";
 
+const isGitHubActions = process.env.GITHUB_ACTIONS === "true";
+
 const nextConfig: NextConfig = {
+  // Erstellt beim Build einen statischen Export im Ordner "out".
+  output: "export",
+
+  // GitHub-Pages-Projekte werden unter /repository-name ausgeliefert.
+  // Lokal bleibt die Anwendung unter "/" erreichbar.
+  basePath: isGitHubActions ? "/challenge-3" : "",
+
+  // Wichtig für GitHub Pages und statische Exporte.
+  trailingSlash: true,
+
   images: {
+    // GitHub Pages unterstützt keine serverseitige Next.js-Bildoptimierung.
+    unoptimized: true,
+
     remotePatterns: [
       {
         protocol: "https",
