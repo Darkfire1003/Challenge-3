@@ -1,24 +1,23 @@
-// -- next.config.ts --
-// Next.js-Konfigurationsdatei für lokale Entwicklung
-// und Deployment auf GitHub Pages.
-
 import type { NextConfig } from "next";
 
 const isGitHubActions = process.env.GITHUB_ACTIONS === "true";
 
+const basePath = isGitHubActions ? "/challenge-3" : "";
+
 const nextConfig: NextConfig = {
-  // Erstellt beim Build einen statischen Export im Ordner "out".
   output: "export",
 
-  // GitHub-Pages-Projekte werden unter /repository-name ausgeliefert.
-  // Lokal bleibt die Anwendung unter "/" erreichbar.
-  basePath: isGitHubActions ? "/challenge-3" : "",
+  basePath,
 
-  // Wichtig für GitHub Pages und statische Exporte.
+  assetPrefix: isGitHubActions ? `${basePath}/` : "",
+
   trailingSlash: true,
 
+  env: {
+    NEXT_PUBLIC_BASE_PATH: basePath,
+  },
+
   images: {
-    // GitHub Pages unterstützt keine serverseitige Next.js-Bildoptimierung.
     unoptimized: true,
 
     remotePatterns: [
